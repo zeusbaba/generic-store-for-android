@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.wareninja.opensource.examples"
+      android:versionCode="1"
+      android:versionName="1.0.1">
+      <!-- History:
+        v1.0.1 : Dec 25, 2010
+        -->
+      
+    <application 
+    	android:icon="@drawable/wareninja_icon" 
+    	android:label="@string/app_name"
+    	android:debuggable="false" 
+		android:allowClearUserData="true"
+		android:name="com.wareninja.opensource.genericstore.ApplicationWareNinja"
+    	>
+    	<!-- android:name is CRITICAL, to have your own Application initialized and used anytime! -->
+    	
+        <activity android:name=".GenericStoreExample"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+    <uses-sdk android:minSdkVersion="4" />
+
+	<!-- (mandatory) if you want to use memdiskcache -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+	<!-- (mandatory) if you want to download images/data from internet -->
+	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+	<!-- (optional) this is for your apps screen support -->
+	<supports-screens 
+		android:anyDensity="true"
+		android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+	/>
+	
+</manifest> 

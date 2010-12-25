@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, GenericStore!</string>
+    <string name="app_name">generic-store-for-android</string>
+    
+    <string name="exception">Exception!</string>
+    <string name="ok">OK</string>
+</resources>
