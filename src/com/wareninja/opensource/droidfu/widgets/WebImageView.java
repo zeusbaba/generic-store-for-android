@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.ViewSwitcher;
 import android.widget.ImageView.ScaleType;
 
+import com.wareninja.opensource.droidfu.cachefu.ImageCache;
 import com.wareninja.opensource.droidfu.imageloader.ImageLoader;
 import com.wareninja.opensource.droidfu.imageloader.ImageLoaderHandler;
 
@@ -100,12 +101,25 @@ public class WebImageView extends ViewSwitcher {
         // styles.recycle();
     }
 
-    private void initialize(Context context, String imageUrl, Drawable progressDrawable,
+    // YG: so that you can pass custom imageCache from your app
+    ImageCache preInitImageCache;
+	public ImageCache getPreInitImageCache() {
+		return preInitImageCache;
+	}
+	public void setPreInitImageCache(ImageCache preInitImageCache) {
+		this.preInitImageCache = preInitImageCache;
+		ImageLoader.initializeWithPreInit(preInitImageCache);
+	}
+
+	private void initialize(Context context, String imageUrl, Drawable progressDrawable,
             boolean autoLoad) {
         this.imageUrl = imageUrl;
         this.progressDrawable = progressDrawable;
 
-        ImageLoader.initialize(context);
+        if (preInitImageCache!=null)
+        	ImageLoader.initializeWithPreInit(preInitImageCache);
+        else
+        	ImageLoader.initialize(context);
 
         // ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
         // 125.0f, preferredItemHeight / 2.0f);

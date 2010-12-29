@@ -88,7 +88,7 @@ public class ImageLoader implements Runnable {
 
     /**
      * This method must be called before any other method is invoked on this class. Please note that
-     * when using ImageLoader as part of {@link WebImageView} or {@link WebGalleryAdapter}, then
+     * when using ImageLoader as part of {@link WebImageView} or {@link WebGalleryAdapterOLD}, then
      * there is no need to call this method, since those classes will already do that for you. This
      * method is idempotent. You may call it multiple times without any side effects.
      * 
@@ -109,9 +109,9 @@ public class ImageLoader implements Runnable {
         if (executor == null) {
             executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(DEFAULT_POOL_SIZE);
         }
-        if (imageCache == null) {
+        //if (imageCache == null) {
             imageCache = preInitImageCache;
-        }
+        //}
     }
     
     private String imageUrl;

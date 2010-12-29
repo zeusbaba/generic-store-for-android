@@ -128,7 +128,10 @@ public class ApplicationWareNinja extends android.app.Application {
     // below funcs are used by WareNinja in different apps, works like a charm
 	//NOTE: you can change these values as you wish!
     
-    private static final String mainCacheDirName_AppCache = ".WareNinja_appCache";
+    private String mainCacheDirName_AppCache = ".WareNinja_appCache";
+    public void setMainCacheDirName_AppCache(String dirName) {
+    	this.mainCacheDirName_AppCache = dirName;
+    }
     
     // --- object cache ---
     private ObjectCache objectCache = null;
