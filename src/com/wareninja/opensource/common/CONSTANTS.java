@@ -25,4 +25,17 @@ public class CONSTANTS {
 	
 	public static final String DEFAULT_SAVEFOTOPATH = "/Pictures/";
     
+	/**
+	 * returns full url for any facebook identifier
+	 * example: profile picture url for a user
+	 */
+	public static String getPictureUrl(String id) {
+		return getPictureUrl(false, id);
+    }
+	public static String getPictureUrl(boolean isSsl, String id) {
+		if (isSsl)
+			return GRAPH_BASE_URL_SSL + id + "/picture";
+		else
+			return GRAPH_BASE_URL + id + "/picture";
+    }
 }
