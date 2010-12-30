@@ -144,8 +144,8 @@ public class ApplicationWareNinja extends android.app.Application {
 		if (objectCache==null) {
 			if(LOGGING.DEBUG)Log.d(TAG, "objectCache: init NEW");
 			objectCache = new ObjectCache(INITIAL_CAPACITY_objectCache, DEFAULT_TTL_MINUTES_objectCache, DEFAULT_POOL_SIZE_objectCache);
-            objectCache.enableDiskCache(this, ObjectCache.DISK_CACHE_SDCARD);
-            objectCache.setCacheDirName(mainCacheDirName_AppCache);// main cache dir name
+			objectCache.setCacheDirName(mainCacheDirName_AppCache);// main cache dir name
+			objectCache.enableDiskCache(this, ObjectCache.DISK_CACHE_SDCARD);
             
             if ( !GenericStore.isCustomKeyExist(GenericStore.TYPE_MEMDISKCACHE, GenericStore.KEY_OBJECTCACHEFUPATH, this) )
 	        	GenericStore.setCustomData(
@@ -168,8 +168,8 @@ public class ApplicationWareNinja extends android.app.Application {
 		if (imageCache==null) {
 			if(LOGGING.DEBUG)Log.d(TAG, "imageCache: init NEW");
 			imageCache = new ImageCache(INITIAL_CAPACITY_ImageCache, DEFAULT_TTL_MINUTES_ImageCache, DEFAULT_POOL_SIZE_ImageCache);
-			imageCache.enableDiskCache(this, ObjectCache.DISK_CACHE_SDCARD);
 			imageCache.setCacheDirName(mainCacheDirName_AppCache);// main cache dir name
+			imageCache.enableDiskCache(this, ObjectCache.DISK_CACHE_SDCARD);
 			
 			if ( !GenericStore.isCustomKeyExist(GenericStore.TYPE_MEMDISKCACHE, GenericStore.KEY_IMAGECACHEFUPATH, this) )
 	        	GenericStore.setCustomData(
