@@ -49,7 +49,7 @@ public class WebImageView extends ViewSwitcher {
 
     private ImageView imageView;
 
-    private ScaleType scaleType = ScaleType.CENTER_CROP;
+    private ScaleType scaleType = ScaleType.CENTER_INSIDE;//ScaleType.CENTER_CROP;
 
     private Drawable progressDrawable;
 
@@ -173,6 +173,20 @@ public class WebImageView extends ViewSwitcher {
                     "image URL is null; did you forget to set it for this view?");
         }
         ImageLoader.start(imageUrl, new DefaultImageLoaderHandler());
+    }
+    //added by YG: so that you can pass in 'custom handler'
+    public void loadImage(ImageLoaderHandler customHandler) {
+        if (imageUrl == null) {
+            throw new IllegalStateException(
+                    "image URL is null; did you forget to set it for this view?");
+        }
+        ImageLoader.start(imageUrl, customHandler);
+    }
+    public ImageView getImageView(){
+    	return this.imageView;
+    }
+    public String getImageUrl() {
+        return this.imageUrl;
     }
 
     public boolean isLoaded() {

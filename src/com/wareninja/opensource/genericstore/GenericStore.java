@@ -43,7 +43,7 @@ public class GenericStore {
     
 	//set SharedPreferences file name. default value, change it as you wish
 	private static String PREF_FILE_NAME = "WareNinja_appPrefs";
-
+	public static final String SETTINGS_ISCACHEHAVEDATA = "ISCACHEHAVEDATA";
     
 	public static void clearAll(int type, Context context) {
 		clearAll(type, context, "unknown");
@@ -57,6 +57,7 @@ public class GenericStore {
 	private static void clearCache(Context context, String caller) {
 		((ApplicationWareNinja)context.getApplicationContext()).getObjectCache().removeAllObjects();
 		((ApplicationWareNinja)context.getApplicationContext()).getImageCache().removeAllObjects();
+		removeObject(SETTINGS_ISCACHEHAVEDATA, context);
 	}
     private static void clearLocal(Context context, String caller) {
         Editor editor = 
@@ -74,6 +75,9 @@ public class GenericStore {
     		return saveObject(objKey, objData, context);
     }
     private static boolean saveObjectInCache(String objKey, Serializable objData, Context context) {
+    	if (!getCustomBoolean(SETTINGS_ISCACHEHAVEDATA, context))
+			setCustomData(TYPE_SHAREDPREF, SETTINGS_ISCACHEHAVEDATA, true, context);
+    	
     	ObjectCache objCache = ((ApplicationWareNinja)context.getApplicationContext()).getObjectCache();
         return objCache.saveObject(objKey, objData);
     }
