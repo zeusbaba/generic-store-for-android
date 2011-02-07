@@ -24,17 +24,9 @@ import com.wareninja.opensource.droidfu.widgets.WebImageView;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.LinearGradient;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.Shader.TileMode;
 import android.graphics.drawable.Drawable;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +35,6 @@ import android.widget.FrameLayout;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Gallery.LayoutParams;
-import android.widget.ImageView.ScaleType;
 
 
 /**
@@ -54,6 +45,8 @@ import android.widget.ImageView.ScaleType;
  */
 public class WebGalleryAdapter extends BaseAdapter {
 
+	private static final String TAG = "WebGalleryAdapter";
+	
     private List<String> imageUrls;
     private Context mContext;
     private Drawable progressDrawable;
@@ -217,15 +210,28 @@ public class WebGalleryAdapter extends BaseAdapter {
         //-webImageView.loadImage();
         // added by YG
         webImageView.loadImage(
-				//new DefaultImageLoaderHandler(webImageView.getImageView(), webImageView.getImageUrl())
         		new ImageLoaderHandler(webImageView.getImageView(), webImageView.getImageUrl()) {
         			
         			@Override
-        	        protected boolean handleImageLoaded(Bitmap bitmap, Message msg) {
+        	        protected boolean handleImageLoaded(Bitmap bitmapOrig, Message msg) {
         	        	
-        				if (bitmap!=null)
-        					bitmap = WareNinjaUtils.getBitmapWithReflection(bitmap);
-        					//bitmap = MobileUtils.getRoundedCornerBitmap(bitmap);
+        				Bitmap bitmap = null;
+        				if (bitmapOrig!=null
+        						&& bitmapOrig.getWidth()>0
+        						&& bitmapOrig.getHeight()>0
+        						) {
+        					
+        					try {
+	        					bitmap = WareNinjaUtils.getBitmapWithReflection(bitmapOrig);
+	        					//bitmap = MobileUtils.getRoundedCornerBitmap(bitmap);
+        					}
+        					catch (Exception bex) {
+        						Log.w(TAG, "Exception from WareNinjaUtils: " + bex.toString());
+        						bitmap = null;
+        					}
+        				}
+        				if (bitmap==null)
+        					bitmap = bitmapOrig;
         	        	
         	        	boolean wasUpdated = super.handleImageLoaded(bitmap, msg);
         	        	if (wasUpdated) {
@@ -243,31 +249,6 @@ public class WebGalleryAdapter extends BaseAdapter {
         onGetView(position, convertView, parent);
 
         return convertView;
-    }
-
-    private class DefaultImageLoaderHandler extends ImageLoaderHandler {
-
-        public DefaultImageLoaderHandler(ImageView imgView, String imgUrl) {
-            super(imgView, imgUrl);
-        }
-
-        @Override
-        protected boolean handleImageLoaded(Bitmap bitmap, Message msg) {
-        	
-        	//bitmap = MobileUtils.getRoundedCornerBitmap(bitmap);
-        	
-        	bitmap = WareNinjaUtils.getRoundedCornerBitmap(bitmap);
-        	//TODO: we are here
-        	
-        	boolean wasUpdated = super.handleImageLoaded(bitmap, msg);
-        	/*if (wasUpdated) {
-                super.setLoaded(wasUpdated);
-                super.setDisplayedChild(1);
-            }*/
-            return wasUpdated;
-        	//super.getImageView().setImageBitmap(bitmap);
-        	
-        }
     }
     
     protected void onGetView(int position, View convertView, ViewGroup parent) {
