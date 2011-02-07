@@ -215,6 +215,7 @@ public class WebGalleryAdapter extends BaseAdapter {
         
         webImageView.setImageUrl(imageUrl);
         //-webImageView.loadImage();
+        // added by YG
         webImageView.loadImage(
 				//new DefaultImageLoaderHandler(webImageView.getImageView(), webImageView.getImageUrl())
         		new ImageLoaderHandler(webImageView.getImageView(), webImageView.getImageUrl()) {
@@ -222,9 +223,9 @@ public class WebGalleryAdapter extends BaseAdapter {
         			@Override
         	        protected boolean handleImageLoaded(Bitmap bitmap, Message msg) {
         	        	
-        	        	//bitmap = MobileUtils.getRoundedCornerBitmap(bitmap);
-        	        	
-        	        	bitmap = WareNinjaUtils.getBitmapWithReflection(bitmap);
+        				if (bitmap!=null)
+        					bitmap = WareNinjaUtils.getBitmapWithReflection(bitmap);
+        					//bitmap = MobileUtils.getRoundedCornerBitmap(bitmap);
         	        	
         	        	boolean wasUpdated = super.handleImageLoaded(bitmap, msg);
         	        	if (wasUpdated) {
