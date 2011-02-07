@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.ViewSwitcher;
 import android.widget.ImageView.ScaleType;
 
+import com.wareninja.opensource.common.WareNinjaUtils;
 import com.wareninja.opensource.droidfu.cachefu.ImageCache;
 import com.wareninja.opensource.droidfu.imageloader.ImageLoader;
 import com.wareninja.opensource.droidfu.imageloader.ImageLoaderHandler;
@@ -192,8 +193,11 @@ public class WebImageView extends ViewSwitcher {
     public boolean isLoaded() {
         return isLoaded;
     }
+	public void setLoaded(boolean isLoaded) {
+		this.isLoaded = isLoaded;
+	}
 
-    public void setImageUrl(String imageUrl) {
+	public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
@@ -224,6 +228,10 @@ public class WebImageView extends ViewSwitcher {
 
         @Override
         protected boolean handleImageLoaded(Bitmap bitmap, Message msg) {
+        	
+        	//bitmap = WareNinjaUtils.getRoundedCornerBitmap(bitmap);
+        	//bitmap = WareNinjaUtils.getBitmapWithReflection(bitmap);
+        	
             boolean wasUpdated = super.handleImageLoaded(bitmap, msg);
             if (wasUpdated) {
                 isLoaded = true;
@@ -232,4 +240,12 @@ public class WebImageView extends ViewSwitcher {
             return wasUpdated;
         }
     }
+    
+    @Override
+	public String toString() {
+		return "WebImageView [imageUrl=" + imageUrl + ", imageView="
+				+ imageView + ", isLoaded=" + isLoaded + ", loadingSpinner="
+				+ loadingSpinner + ", progressDrawable=" + progressDrawable
+				+ ", scaleType=" + scaleType + "]";
+	}
 }

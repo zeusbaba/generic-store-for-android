@@ -1,7 +1,7 @@
-I made use of Droid-Fu caching (https://github.com/kaeppler/droid-fu), 
-which was covering Image caching, I extended into using generic object caching too.
-
 GenericStore aims to abstract usage of ObjectCache and SharedPreferences.
 
-note: I used similar structure for FotoLIcKE.com , and works like a charm.
+I'm using this impl for FotoLIcKE, MayorMonster and ongoign Android apps -> works like a charm! :-)
+
+p.s. I made use of Droid-Fu caching (https://github.com/kaeppler/droid-fu), 
+which was covering Image caching, I extended into using generic object caching too.
  
