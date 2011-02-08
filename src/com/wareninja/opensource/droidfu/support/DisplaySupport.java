@@ -71,6 +71,10 @@ WVGA854 (480x854)
     public static final String SCREEN_SIZE_HVGA = "320x480";
     public static final String SCREEN_SIZE_WVGA800 = "480x800";
     public static final String SCREEN_SIZE_WVGA854 = "480x854";
+    public static final String SCREEN_SIZE_800_600 = "800x600";
+    public static final String SCREEN_SIZE_600_800 = "600x800";
+    public static final String SCREEN_SIZE_800_480 = "800x480";
+    public static final String SCREEN_SIZE_854_480 = "854x480";
     private static String screenSizeType = "";
     private static int screenSizeW = -1;
     private static int screenSizeH = -1;
@@ -105,6 +109,14 @@ WVGA854 (480x854)
     		screenSizeType = SCREEN_SIZE_WVGA800;
     	else if (scrSize.equals(SCREEN_SIZE_WVGA854))
     		screenSizeType = SCREEN_SIZE_WVGA854;
+    	else if (scrSize.equals(SCREEN_SIZE_800_600))
+    		screenSizeType = SCREEN_SIZE_800_600;
+    	else if (scrSize.equals(SCREEN_SIZE_600_800))
+    		screenSizeType = SCREEN_SIZE_600_800;
+    	else if (scrSize.equals(SCREEN_SIZE_800_480))
+    		screenSizeType = SCREEN_SIZE_800_480;
+    	else if (scrSize.equals(SCREEN_SIZE_854_480))
+    		screenSizeType = SCREEN_SIZE_854_480;
     	else 
     		screenSizeType = SCREEN_SIZE_HVGA;
     	
