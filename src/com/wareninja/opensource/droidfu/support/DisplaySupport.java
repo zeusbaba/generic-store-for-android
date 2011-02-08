@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 public class DisplaySupport {
@@ -52,5 +53,83 @@ public class DisplaySupport {
             }
         }
         return screenDensity;
+    }
+    
+    
+    // --- added by YG ---
+    /*
+QVGA (240x320)			
+WQVGA400 (240x400)
+WQVGA432 (240x432)
+HVGA (320x480)
+WVGA800 (480x800)
+WVGA854 (480x854)
+     */
+    public static final String SCREEN_SIZE_QVGA = "240x320";
+    public static final String SCREEN_SIZE_WQVGA400 = "240x400";
+    public static final String SCREEN_SIZE_WQVGA432 = "240x432";
+    public static final String SCREEN_SIZE_HVGA = "320x480";
+    public static final String SCREEN_SIZE_WVGA800 = "480x800";
+    public static final String SCREEN_SIZE_WVGA854 = "480x854";
+    private static String screenSizeType = "";
+    private static int screenSizeW = -1;
+    private static int screenSizeH = -1;
+    public static String getScreenSizeType(Context context) {// returns type
+        
+    	if ( TextUtils.isEmpty(screenSizeType) ) {
+	    	DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+	    	if (screenSizeW == -1) {
+	            try {
+	            	screenSizeW = DisplayMetrics.class.getField("widthPixels").getInt(displayMetrics);
+	            } catch (Exception e) {
+	            	screenSizeW = 320;
+	            }
+	        }
+	    	if (screenSizeH == -1) {
+	            try {
+	            	screenSizeH = DisplayMetrics.class.getField("heightPixels").getInt(displayMetrics);
+	            } catch (Exception e) {
+	            	screenSizeH = 480;
+	            }
+	        }
+    	}
+    	
+    	String scrSize = screenSizeW + "x" + screenSizeH;
+    	if (scrSize.equals(SCREEN_SIZE_QVGA))
+    		screenSizeType = SCREEN_SIZE_QVGA;
+    	else if (scrSize.equals(SCREEN_SIZE_WQVGA400))
+    		screenSizeType = SCREEN_SIZE_WQVGA400;
+    	else if (scrSize.equals(SCREEN_SIZE_WQVGA432))
+    		screenSizeType = SCREEN_SIZE_WQVGA432;
+    	else if (scrSize.equals(SCREEN_SIZE_WVGA800))
+    		screenSizeType = SCREEN_SIZE_WVGA800;
+    	else if (scrSize.equals(SCREEN_SIZE_WVGA854))
+    		screenSizeType = SCREEN_SIZE_WVGA854;
+    	else 
+    		screenSizeType = SCREEN_SIZE_HVGA;
+    	
+        return screenSizeType;
+    }
+    public static int getScreenSizeW(Context context) {
+        if (screenSizeW == -1) {
+            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+            try {
+            	screenSizeW = DisplayMetrics.class.getField("widthPixels").getInt(displayMetrics);
+            } catch (Exception e) {
+            	screenSizeW = 320;
+            }
+        }
+        return screenSizeW;
+    }
+    public static int getScreenSizeH(Context context) {
+        if (screenSizeH == -1) {
+            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+            try {
+            	screenSizeH = DisplayMetrics.class.getField("heightPixels").getInt(displayMetrics);
+            } catch (Exception e) {
+            	screenSizeH = 480;
+            }
+        }
+        return screenSizeH;
     }
 }
