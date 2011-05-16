@@ -27,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.ViewSwitcher;
 import android.widget.ImageView.ScaleType;
 
-import com.wareninja.opensource.common.WareNinjaUtils;
 import com.wareninja.opensource.droidfu.cachefu.ImageCache;
 import com.wareninja.opensource.droidfu.imageloader.ImageLoader;
 import com.wareninja.opensource.droidfu.imageloader.ImageLoaderHandler;

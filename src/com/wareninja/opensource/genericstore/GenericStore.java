@@ -20,16 +20,14 @@ package com.wareninja.opensource.genericstore;
 import java.io.Serializable;
 import java.util.List;
 
-import com.wareninja.opensource.common.LOGGING;
-import com.wareninja.opensource.common.ObjectSerializer;
-//import com.wareninja.opensource.droidfu.cachefu.ImageCache;
-import com.wareninja.opensource.droidfu.cachefu.ObjectCache;
-import com.wareninja.opensource.genericstore.ApplicationWareNinja;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
+
+import com.wareninja.opensource.common.LOGGING;
+import com.wareninja.opensource.common.ObjectSerializer;
+import com.wareninja.opensource.droidfu.cachefu.ObjectCache;
 
 public class GenericStore {
     

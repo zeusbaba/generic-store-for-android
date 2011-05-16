@@ -23,8 +23,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 
-import android.util.Log;
-
 /**
  * Implements a cache capable of caching Serializable objects. 
  * It exposes helper methods to immediately access objects

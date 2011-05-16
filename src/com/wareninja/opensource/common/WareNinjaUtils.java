@@ -17,12 +17,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.impl.cookie.DateUtils;
 
@@ -45,18 +54,7 @@ import android.graphics.Shader.TileMode;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.X509TrustManager;
 
 
 public class WareNinjaUtils {
@@ -329,6 +327,42 @@ public class WareNinjaUtils {
 
         return output;
     }
+    
+    /**
+     * Creates rounded bitmap
+     * @param bitmap the source bitmap
+     * @return the rounded bitmap
+     */
+    // source from: http://android-devblog.blogspot.com/2010/08/rounding-picture.html#more
+    public static Bitmap createRoundedBitmap(Bitmap bitmap, int round) {
+        if (bitmap == null) {
+            return null;
+        }
+            
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        // create output bitmap
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+
+        // assign canvas with output bitmap
+        Canvas canvas = new Canvas(output);
+        canvas.drawARGB(0, 0, 0, 0);
+            
+        // initialize paint
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+
+        // draw rounded rect to bitmap
+        paint.setColor(0xFFFFFFFF);
+        canvas.drawRoundRect(new RectF(rect), round, round, paint);
+
+        // copy original bitmap to rounded area
+        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+            
+        return output;
+    }
+    
 
     public static String encodeUrl(Bundle parameters) {
         if (parameters == null) {

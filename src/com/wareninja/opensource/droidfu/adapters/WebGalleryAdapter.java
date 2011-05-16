@@ -17,11 +17,6 @@ package com.wareninja.opensource.droidfu.adapters;
 
 import java.util.List;
 
-import com.wareninja.opensource.common.WareNinjaUtils;
-import com.wareninja.opensource.droidfu.cachefu.ImageCache;
-import com.wareninja.opensource.droidfu.imageloader.ImageLoaderHandler;
-import com.wareninja.opensource.droidfu.widgets.WebImageView;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -33,8 +28,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.Gallery;
-import android.widget.ImageView;
 import android.widget.Gallery.LayoutParams;
+
+import com.wareninja.opensource.common.WareNinjaUtils;
+import com.wareninja.opensource.droidfu.cachefu.ImageCache;
+import com.wareninja.opensource.droidfu.imageloader.ImageLoaderHandler;
+import com.wareninja.opensource.droidfu.widgets.WebImageView;
 
 
 /**

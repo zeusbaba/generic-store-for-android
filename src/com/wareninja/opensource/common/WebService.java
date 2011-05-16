@@ -54,6 +54,21 @@ public class WebService{
         webServiceUrl = serviceName;
     }
 
+    public WebService(){
+        HttpParams myParams = new BasicHttpParams();
+
+        HttpConnectionParams.setConnectionTimeout(myParams, 20000);
+        HttpConnectionParams.setSoTimeout(myParams, 20000);
+        httpClient = new DefaultHttpClient(myParams);
+        localContext = new BasicHttpContext();
+    }
+    public void setWebServiceUrl(String serviceName){
+    	webServiceUrl = serviceName;
+    }
+    public String getWebServiceUrl(String serviceName){
+    	return webServiceUrl;
+    }
+    
     // added by YG
     public String getJsonFromParams(Map<String, Object> params) {
 
@@ -117,7 +132,7 @@ public class WebService{
 
         httpPost.setEntity(tmp);
 
-        Log.d(TAG, webServiceUrl + "?" + data);
+        if(LOGGING.DEBUG)Log.d(TAG, webServiceUrl + "?" + data);
 
         try {
             response = httpClient.execute(httpPost,localContext);
@@ -157,7 +172,7 @@ public class WebService{
     	}
 
         httpGet = new HttpGet(getUrl);
-        Log.e(TAG, "WebGetURL: "+getUrl);
+        if(LOGGING.DEBUG)Log.d(TAG, "WebGetURL: "+getUrl);
 
         try {
             response = httpClient.execute(httpGet);

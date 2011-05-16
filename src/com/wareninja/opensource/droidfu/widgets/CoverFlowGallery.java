@@ -23,14 +23,13 @@ package com.wareninja.opensource.droidfu.widgets;
 
 
 import android.content.Context;
-import android.view.View;
-import android.widget.Gallery;
-import android.widget.ImageView;
-
 import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.animation.Transformation;
+import android.widget.Gallery;
+import android.widget.ImageView;
 
 public class CoverFlowGallery extends Gallery {
 
