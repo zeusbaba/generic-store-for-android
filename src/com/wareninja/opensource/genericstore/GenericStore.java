@@ -212,13 +212,13 @@ public class GenericStore {
         SharedPreferences savedSession =
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
-        return (savedSession.getFloat(key, -1));
+        return (savedSession.getFloat(key, -1F));
     }
     public static long getCustomLong(String key, Context context) {
         SharedPreferences savedSession =
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
-        return (savedSession.getLong(key, -1));
+        return (savedSession.getLong(key, -1L));
     }
     
 
