@@ -165,6 +165,7 @@ public class GenericStore {
         	editor.putFloat(key, (Float)value);
         else if (value instanceof Long)
         	editor.putLong(key, (Long)value);
+        
     	
     	/*
     	final boolean booleanObj = false;
@@ -205,6 +206,19 @@ public class GenericStore {
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
         return (savedSession.getInt(key, -1));
+    }
+    
+    public static float getCustomFloat(String key, Context context) {
+        SharedPreferences savedSession =
+            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        
+        return (savedSession.getFloat(key, -1));
+    }
+    public static long getCustomLong(String key, Context context) {
+        SharedPreferences savedSession =
+            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        
+        return (savedSession.getLong(key, -1));
     }
     
 
