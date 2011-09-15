@@ -47,7 +47,7 @@ public class GenericStore {
 		clearAll(type, context, "unknown");
 	}
 	public static void clearAll(int type, Context context, String caller) {
-		if (type==TYPE_MEMDISKCACHE)
+		if (TYPE_MEMDISKCACHE==type)
 			clearCache(context, caller);
 		else
 			clearLocal(context, caller);
@@ -67,7 +67,7 @@ public class GenericStore {
     // ---
     public static boolean saveObject(int type, String objKey, Serializable objData, Context context) {
     	
-    	if (type==TYPE_MEMDISKCACHE)
+    	if (TYPE_MEMDISKCACHE==type)
     		return saveObjectInCache(objKey, objData, context);
     	else
     		return saveObject(objKey, objData, context);
@@ -88,7 +88,7 @@ public class GenericStore {
     }
     
     public static Object getObject(int type, String objKey, Context context) {
-    	if (type==TYPE_MEMDISKCACHE)
+    	if (TYPE_MEMDISKCACHE==type)
     		return getObjectFromCache(objKey, context);
     	else
     		return getObject(objKey, context);
@@ -107,7 +107,7 @@ public class GenericStore {
     }
     
     public static Object removeObject(int type, String objKey, Context context) {
-    	if (type==TYPE_MEMDISKCACHE)
+    	if (TYPE_MEMDISKCACHE==type)
     		return removeObjectFromCache(objKey, context);
     	else
     		return removeObject(objKey, context);
@@ -127,7 +127,7 @@ public class GenericStore {
     }
     
     public static boolean isCustomKeyExist(int type, String customKey, Context context) {
-    	if (type==TYPE_MEMDISKCACHE)
+    	if (TYPE_MEMDISKCACHE==type)
         	return isCustomKeyExistInCache(customKey, context);
         else
         	return isCustomKeyExistInLocal(customKey, context);
@@ -145,7 +145,7 @@ public class GenericStore {
     // ---
     
     public static boolean setCustomData(int type, String key, Object value, Context context) {
-    	if (type==TYPE_MEMDISKCACHE)
+    	if (TYPE_MEMDISKCACHE==type)
     		return saveObjectInCache(key, (Serializable)value, context);
     	else
     		return setCustomDataInLocal(key, value, context);
@@ -190,35 +190,53 @@ public class GenericStore {
     }
     
     public static boolean getCustomBoolean(String key, Context context) {
+    	return getCustomBoolean(key, false, context);
+    }
+    public static boolean getCustomBoolean(String key, boolean defValue, Context context) {
         SharedPreferences savedSession =
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
-        return (savedSession.getBoolean(key, false));
+        return (savedSession.getBoolean(key, defValue));
     }
+    
     public static String getCustomString(String key, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
-        
-        return (savedSession.getString(key, null));
+    	return getCustomString(key, null, context);
     }
-    public static int getCustomInt(String key, Context context) {
+    public static String getCustomString(String key, String defValue, Context context) {
         SharedPreferences savedSession =
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
-        return (savedSession.getInt(key, -1));
+        return (savedSession.getString(key, defValue));
+    }
+    
+    public static int getCustomInt(String key, Context context) {
+    	return getCustomInt(key, -1, context);
+    }
+    public static int getCustomInt(String key, int defValue, Context context) {
+        SharedPreferences savedSession =
+            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        
+        return (savedSession.getInt(key, defValue));
     }
     
     public static float getCustomFloat(String key, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
-        
-        return (savedSession.getFloat(key, -1F));
+    	return getCustomFloat(key, -1F, context);
     }
-    public static long getCustomLong(String key, Context context) {
+    public static float getCustomFloat(String key, float defValue, Context context) {
         SharedPreferences savedSession =
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
-        return (savedSession.getLong(key, -1L));
+        return (savedSession.getFloat(key, defValue));
+    }
+    
+    public static long getCustomLong(String key, Context context) {
+    	return getCustomLong(key, -1L, context);
+    }
+    public static long getCustomLong(String key, long defValue, Context context) {
+        SharedPreferences savedSession =
+            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        
+        return (savedSession.getLong(key, defValue));
     }
     
 
