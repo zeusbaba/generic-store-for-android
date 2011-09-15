@@ -16,6 +16,7 @@
 package com.wareninja.opensource.droidfu.support;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -143,5 +144,13 @@ WVGA854 (480x854)
             }
         }
         return screenSizeH;
+    }
+    
+    // temporary func to check xlarge screen
+    private static final int SCREENLAYOUT_SIZE_XLARGE = 4;
+    public static final boolean isScreenXLarge(Context context) {
+        int screenLayout = context.getResources().getConfiguration().screenLayout;
+        int size = screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+        return size == SCREENLAYOUT_SIZE_XLARGE;
     }
 }

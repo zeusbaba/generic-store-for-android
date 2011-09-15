@@ -33,6 +33,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -113,6 +114,13 @@ public class ImageLoader implements Runnable {
             imageCache = preInitImageCache;
         //}
     }
+    
+    // YG: to set custom user-agent header
+    static String customHttpUserAgent = "";
+    public static synchronized void setHttpUserAgent(String httpUserAgent) {
+		customHttpUserAgent = httpUserAgent;
+	}
+    
     
     private String imageUrl;
 
@@ -240,7 +248,11 @@ public class ImageLoader implements Runnable {
         //-HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         
         URLConnection connection = HttpUtils.getConnection(url);
-
+        
+        if (!TextUtils.isEmpty(customHttpUserAgent)) {
+        	connection.setRequestProperty( "User-Agent", customHttpUserAgent );
+        }
+        
         // determine the image size and allocate a buffer
         int fileSize = connection.getContentLength();
         byte[] imageData = new byte[fileSize];

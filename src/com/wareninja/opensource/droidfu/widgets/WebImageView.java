@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.ImageView;
@@ -110,17 +111,29 @@ public class WebImageView extends ViewSwitcher {
 		this.preInitImageCache = preInitImageCache;
 		ImageLoader.initializeWithPreInit(preInitImageCache);
 	}
+	
+	String customHttpUserAgent = "";
+	public void setHttpUserAgent(String httpUserAgent) {
+		this.customHttpUserAgent = httpUserAgent;
+	}
+	
 
 	private void initialize(Context context, String imageUrl, Drawable progressDrawable,
             boolean autoLoad) {
         this.imageUrl = imageUrl;
         this.progressDrawable = progressDrawable;
 
-        if (preInitImageCache!=null)
+        if (preInitImageCache!=null) {
         	ImageLoader.initializeWithPreInit(preInitImageCache);
-        else
+        }	
+        else {
         	ImageLoader.initialize(context);
+        }	
 
+        if (!TextUtils.isEmpty(customHttpUserAgent))  {
+        	ImageLoader.setHttpUserAgent(customHttpUserAgent);
+        }
+        
         // ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
         // 125.0f, preferredItemHeight / 2.0f);
         // anim.setDuration(500L);
