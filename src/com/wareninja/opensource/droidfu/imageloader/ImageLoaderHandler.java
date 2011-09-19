@@ -25,10 +25,20 @@ public class ImageLoaderHandler extends Handler {
 
     private ImageView imageView;
     private String imageUrl;
+    private String imageUrlCached;
+    
+	public String getImageUrlCached() {
+		return imageUrlCached;
+	}
 
-    public ImageLoaderHandler(ImageView imageView, String imageUrl) {
+	public void setImageUrlCached(String imageUrlCached) {
+		this.imageUrlCached = imageUrlCached;
+	}
+
+	public ImageLoaderHandler(ImageView imageView, String imageUrl, String imageUrlCached) {
         this.imageView = imageView;
         this.imageUrl = imageUrl;
+        this.imageUrlCached = imageUrlCached;
     }
 
     @Override
