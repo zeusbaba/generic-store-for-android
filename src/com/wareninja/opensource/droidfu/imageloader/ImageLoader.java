@@ -123,12 +123,13 @@ public class ImageLoader implements Runnable {
     
     
     private String imageUrl;
-
+    private String imageUrlCached;
     private ImageLoaderHandler handler;
 
-    private ImageLoader(String imageUrl, ImageLoaderHandler handler) {
+    private ImageLoader(String imageUrl, String imageUrlCached, ImageLoaderHandler handler) {
         this.imageUrl = imageUrl;
         this.handler = handler;
+        this.imageUrlCached = imageUrlCached;
     }
 
     /**
@@ -141,8 +142,8 @@ public class ImageLoader implements Runnable {
      * @param imageView
      *            the ImageView which should be updated with the new image
      */
-    public static void start(String imageUrl, ImageView imageView) {
-        start(imageUrl, imageView, new ImageLoaderHandler(imageView, imageUrl));
+    public static void start(String imageUrl, String imageUrlCached, ImageView imageView) {
+        start(imageUrl, imageUrlCached, imageView, new ImageLoaderHandler(imageView, imageUrl, imageUrlCached));
     }
 
     /**
@@ -157,11 +158,11 @@ public class ImageLoader implements Runnable {
      * @param handler
      *            the handler which is used to handle the downloaded image
      */
-    public static void start(String imageUrl, ImageLoaderHandler handler) {
-        start(imageUrl, handler.getImageView(), handler);
+    public static void start(String imageUrl, String imageUrlCached, ImageLoaderHandler handler) {
+        start(imageUrl, imageUrlCached, handler.getImageView(), handler);
     }
 
-    private static void start(String imageUrl, ImageView imageView, ImageLoaderHandler handler) {
+    private static void start(String imageUrl, String imageUrlCached, ImageView imageView, ImageLoaderHandler handler) {
         if (imageView != null) {
             String oldImageUrl = (String) imageView.getTag();
             if (imageUrl.equals(oldImageUrl)) {
@@ -172,11 +173,11 @@ public class ImageLoader implements Runnable {
             }
         }
 
-        if (imageCache.containsKeyInMemory(imageUrl)) {
+        if (imageCache.containsKeyInMemory(imageUrlCached)) {
             // do not go through message passing, handle directly instead
-            handler.handleImageLoaded(imageCache.getBitmap(imageUrl), null);
+            handler.handleImageLoaded(imageCache.getBitmap(imageUrlCached), null);
         } else {
-            executor.execute(new ImageLoader(imageUrl, handler));
+            executor.execute(new ImageLoader(imageUrl, imageUrlCached, handler));
         }
     }
 
@@ -204,7 +205,7 @@ public class ImageLoader implements Runnable {
     public void run() {
         // TODO: if we had a way to check for in-memory hits, we could improve performance by
         // fetching an image from the in-memory cache on the main thread
-        Bitmap bitmap = imageCache.getBitmap(imageUrl);
+        Bitmap bitmap = imageCache.getBitmap(imageUrlCached);
 
         if (bitmap == null) {
             bitmap = downloadImage();
@@ -224,12 +225,11 @@ public class ImageLoader implements Runnable {
             try {
             	byte[] imageData = retrieveImageData();
 
-                imageCache.put(imageUrl, imageData);
-
+                imageCache.put(imageUrlCached, imageData);
                 return BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
 
             } catch (Throwable e) {
-                Log.w(LOG_TAG, "download for " + imageUrl + " failed (attempt " + timesTried + ")");
+                Log.w(LOG_TAG, "download for " + imageUrl + " saved as " + imageUrlCached + " failed (attempt " + timesTried + ")");
                 e.printStackTrace();
                 SystemClock.sleep(DEFAULT_RETRY_HANDLER_SLEEP_TIME);
                 timesTried++;
@@ -252,13 +252,12 @@ public class ImageLoader implements Runnable {
         if (!TextUtils.isEmpty(customHttpUserAgent)) {
         	connection.setRequestProperty( "User-Agent", customHttpUserAgent );
         }
-        
         // determine the image size and allocate a buffer
         int fileSize = connection.getContentLength();
         byte[] imageData = new byte[fileSize];
 
         // download the file
-        if (LOGGING.DEBUG)Log.d(LOG_TAG, "fetching image " + imageUrl + " (" + fileSize + ")");
+        if (LOGGING.DEBUG)Log.d(LOG_TAG, "-----------fetching image " + imageUrl + " (" + fileSize + ")");
         //BufferedInputStream istream = new BufferedInputStream(connection.getInputStream());
         BufferedInputStream istream = new BufferedInputStream(connection.getInputStream(), 10240);//YG: 10k=10240
         int bytesRead = 0;

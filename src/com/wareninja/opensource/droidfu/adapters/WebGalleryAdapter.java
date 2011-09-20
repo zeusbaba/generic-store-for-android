@@ -209,7 +209,7 @@ public class WebGalleryAdapter extends BaseAdapter {
         //-webImageView.loadImage();
         // added by YG
         webImageView.loadImage(
-        		new ImageLoaderHandler(webImageView.getImageView(), webImageView.getImageUrl()) {
+        		new ImageLoaderHandler(webImageView.getImageView(), webImageView.getImageUrl(), webImageView.getImageUrl()) {
         			
         			@Override
         	        protected boolean handleImageLoaded(Bitmap bitmapOrig, Message msg) {
