@@ -43,7 +43,8 @@ public class WebImageView extends ViewSwitcher {
 	private static final String XMLNS = "http://github.com/droidfu/schema";
 	
     private String imageUrl;
-
+    private String imageUrlCached;
+    
     private boolean isLoaded;
 
     private ProgressBar loadingSpinner;
@@ -53,8 +54,8 @@ public class WebImageView extends ViewSwitcher {
     private ScaleType scaleType = ScaleType.CENTER_INSIDE;//ScaleType.CENTER_CROP;
 
     private Drawable progressDrawable;
-
-    /**
+    
+	/**
      * @param context
      *            the view's current context
      * @param imageUrl
@@ -112,15 +113,24 @@ public class WebImageView extends ViewSwitcher {
 		ImageLoader.initializeWithPreInit(preInitImageCache);
 	}
 	
-	String customHttpUserAgent = "";
-	public void setHttpUserAgent(String httpUserAgent) {
-		this.customHttpUserAgent = httpUserAgent;
+	static String customHttpUserAgent = "";
+	static public void setHttpUserAgent(String httpUserAgent) {
+		customHttpUserAgent = httpUserAgent;
+		if (!TextUtils.isEmpty(customHttpUserAgent)) {
+	        	ImageLoader.setHttpUserAgent(customHttpUserAgent);
+        }
 	}
 	
-
+	
 	private void initialize(Context context, String imageUrl, Drawable progressDrawable,
             boolean autoLoad) {
+		initialize(context, imageUrl, imageUrl, progressDrawable, autoLoad);
+	}
+
+	private void initialize(Context context, String imageUrl, String imageUrlCached, Drawable progressDrawable,
+            boolean autoLoad) {
         this.imageUrl = imageUrl;
+        this.imageUrlCached = imageUrlCached;
         this.progressDrawable = progressDrawable;
 
         if (preInitImageCache!=null) {
@@ -185,7 +195,7 @@ public class WebImageView extends ViewSwitcher {
             throw new IllegalStateException(
                     "image URL is null; did you forget to set it for this view?");
         }
-        ImageLoader.start(imageUrl, new DefaultImageLoaderHandler());
+        ImageLoader.start(imageUrl, !TextUtils.isEmpty(imageUrlCached) ? imageUrlCached : imageUrl, new DefaultImageLoaderHandler());
     }
     //added by YG: so that you can pass in 'custom handler'
     public void loadImage(ImageLoaderHandler customHandler) {
@@ -193,7 +203,7 @@ public class WebImageView extends ViewSwitcher {
             throw new IllegalStateException(
                     "image URL is null; did you forget to set it for this view?");
         }
-        ImageLoader.start(imageUrl, customHandler);
+        ImageLoader.start(imageUrl, !TextUtils.isEmpty(imageUrlCached) ? imageUrlCached : imageUrl, customHandler);
     }
     public ImageView getImageView(){
     	return this.imageView;
@@ -205,6 +215,14 @@ public class WebImageView extends ViewSwitcher {
     public boolean isLoaded() {
         return isLoaded;
     }
+	public String getImageUrlCached() {
+		return imageUrlCached;
+	}
+
+	public void setImageUrlCached(String imageUrlCached) {
+		this.imageUrlCached = imageUrlCached;
+	}
+
 	public void setLoaded(boolean isLoaded) {
 		this.isLoaded = isLoaded;
 	}
@@ -235,7 +253,7 @@ public class WebImageView extends ViewSwitcher {
     private class DefaultImageLoaderHandler extends ImageLoaderHandler {
 
         public DefaultImageLoaderHandler() {
-            super(imageView, imageUrl);
+            super(imageView, imageUrl, !TextUtils.isEmpty(imageUrlCached) ? imageUrlCached : imageUrl);
         }
 
         @Override
@@ -251,12 +269,18 @@ public class WebImageView extends ViewSwitcher {
             }
             return wasUpdated;
         }
+
+		@Override
+		public String toString() {
+			return "DefaultImageLoaderHandler []";
+		}
     }
     
     @Override
 	public String toString() {
 		return "WebImageView [imageUrl=" + imageUrl + ", imageView="
-				+ imageView + ", isLoaded=" + isLoaded + ", loadingSpinner="
+				+ imageView + ", imageUrlCached="
+				+ imageUrlCached + ", isLoaded=" + isLoaded + ", loadingSpinner="
 				+ loadingSpinner + ", progressDrawable=" + progressDrawable
 				+ ", scaleType=" + scaleType + "]";
 	}
