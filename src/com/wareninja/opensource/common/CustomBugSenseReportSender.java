@@ -2,13 +2,26 @@ package com.wareninja.opensource.common;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.acra.CrashReportData;
 import org.acra.ReportField;
 import org.acra.sender.ReportSender;
 import org.acra.sender.ReportSenderException;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
 
 import com.google.gson.JsonObject;
 
@@ -96,13 +109,50 @@ public class CustomBugSenseReportSender implements ReportSender {
 		webService.addRequestHeader("X-BugSense-Api-Key", bugSenseApiKey);
 		
 		Bundle params = new Bundle();
-		params.putString("data", json+"");
-		params.putString("hash", stacktrace);
+		
 		try {
+			
+			params.putString("data", json+"");
+			params.putString("hash", WareNinjaUtils.MD5(stacktrace));
+			
 			webService.webPost("", params);
+			
+			//-submitError(WareNinjaUtils.MD5(stacktrace), json+"");
 		}
 		catch (Exception ex) {
 			Log.e(TAG, "Exception : " + ex.toString());
+		}
+    }
+    
+    private final static int TIMEOUT = 60000;
+    private void submitError(String hash, String data) {
+    	
+    	DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpParams params = httpClient.getParams();
+		
+		HttpProtocolParams.setUseExpectContinue(params, false);
+		HttpConnectionParams.setConnectionTimeout(params, TIMEOUT);
+		HttpConnectionParams.setSoTimeout(params, TIMEOUT);
+	
+		HttpPost httpPost = new HttpPost(bugSenseEndPoint);
+		httpPost.addHeader("X-BugSense-Api-Key", bugSenseApiKey);
+		
+		List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+		nvps.add(new BasicNameValuePair("data", data));
+		nvps.add(new BasicNameValuePair("hash", hash));
+		
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+			
+			// we don't care about the actual response
+			// only if we managed to reach the server
+	
+			HttpResponse response = httpClient.execute(httpPost);
+			HttpEntity entity = response.getEntity();
+			Log.d(TAG, "entity : " + entity);
+		}
+		catch (Exception ex) {
+			Log.e(TAG, "Error sending exception stacktrace", ex);
 		}
     }
 }
