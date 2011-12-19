@@ -12,11 +12,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -362,7 +364,44 @@ public class WareNinjaUtils {
             
         return output;
     }
-    
+    public static String read(InputStream in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader r = new BufferedReader(new InputStreamReader(in), 1000);
+        for (String line = r.readLine(); line != null; line = r.readLine()) {
+            sb.append(line);
+        }
+        in.close();
+        return sb.toString();
+    }
+    public static String MD5 (String data) throws Exception {
+		MessageDigest m = MessageDigest.getInstance("MD5");
+
+		m.update(data.getBytes(), 0, data.length());
+		return new BigInteger(1, m.digest()).toString(16);
+	}
+    /**
+     * Generate the multi-part post body providing the parameters and boundary
+     * string
+     * 
+     * @param parameters the parameters need to be posted
+     * @param boundary the random string as boundary
+     * @return a string of the post body
+     */
+    public static String encodePostBody(Bundle parameters, String boundary) {
+        if (parameters == null)
+            return "";
+        StringBuilder sb = new StringBuilder();
+
+        for (String key : parameters.keySet()) {
+
+            sb.append("Content-Disposition: form-data; name=\"" + key +
+            // "\"\r\n\r\n" + parameters.getString(key));
+                    "\"\r\n\r\n" + parameters.get(key));// to avoid type clash
+            sb.append("\r\n" + "--" + boundary + "\r\n");
+        }
+
+        return sb.toString();
+    }
 
     public static String encodeUrl(Bundle parameters) {
         if (parameters == null) {
