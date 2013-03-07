@@ -19,6 +19,6 @@ package com.wareninja.opensource.common;
 
 public class LOGGING {
 
-	public static final boolean DEBUG = true;// enable/disable debug logging
+	public static final boolean DEBUG = false;// enable/disable debug logging
     
 }
