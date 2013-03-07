@@ -1,5 +1,12 @@
-package com.wareninja.opensource.genericstore_example;
+/***
+ * 	Copyright (c) 2013 WareNinja.com / BEERSTORM.net
+ *  	
+ *  @author yg@wareninja.com / twitter: @WareNinja
+ *  @see http://www.WareNinja.com - https://github.com/WareNinja
+ */
 
+
+package com.wareninja.opensource.genericstore_example;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
