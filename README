@@ -1,7 +1,9 @@
 NOTE:  
-master contains latest updates and changes!!!!    
-if you want the older version, you should switch to branch "pre-2012"   
-    
+master contains latest updates and changes!!!!   
+/demo-example contains a project example for sample usage of generic-store    
+            
+if you want the older version of the library, you should switch to branch "pre-2012"       
+     
 GenericStore is an abstraction library for easier & simpler usage of ObjectCache and SharedPreferences.
     
 I'm using this impl for LOCO8, MayorMonster, FotoFeed, CheckInNINJA and ongoing Android apps -> works like a charm! :-)    
