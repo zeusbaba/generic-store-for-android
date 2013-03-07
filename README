@@ -1,3 +1,5 @@
+NOTE: this branch contains impl of pre-2012!!!
+
 GenericStore aims to abstract usage of ObjectCache and SharedPreferences.
 
 I'm using this impl for LOCO8, FotoFeed, MayorMonster, CheckInNINJA and ongoing Android apps -> works like a charm! :-)
@@ -6,6 +8,7 @@ p.s. I made use of Droid-Fu caching (https://github.com/kaeppler/droid-fu),
 which was covering Image caching, I extended into using generic object caching too.
 
 clone the project from github, then import as "library", after that it is easy to include in your projects.
+
 
 TODO: I'll add some example code as soon as possible, in meantime feel free to ping me if you need any help 
 yg at wareninja.com
