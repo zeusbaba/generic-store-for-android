@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="white">#ffffff</drawable>
+    <drawable name="black">#000000</drawable>
+    <drawable name="drkgray">#2E2E2E</drawable>
+    <drawable name="gray">#585858</drawable>
+    <drawable name="ltgray">#BDBDBD</drawable>
+    <drawable name="extraltgray">#F2F2F2</drawable>
+    <drawable name="ltblue">#81BEF7</drawable>
+    <drawable name="extraltblue">#A9D0F5</drawable>
+    
+    <color name="activerow_bgcolor">#ffBDBDBD</color>
+    <color name="inactiverow_bgcolor">#ffffffff</color>
+    
+    <drawable name="titlecolor">#83a4cd</drawable>
+    <drawable name="normaltextcolor">#83a4cd</drawable>
+    <drawable name="menutextcolor">#83a4cd</drawable>
+    
+            
+</resources>
