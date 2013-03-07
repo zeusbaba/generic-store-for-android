@@ -1,6 +1,7 @@
 /***
- * 	Copyright (c) 2010-2011 WareNinja.com
- * 	Author: yg@wareninja.com
+ * 	Copyright (c) 2010-2013 WareNinja.com / BEERSTORM.net
+ * 	@author yg@wareninja.com
+ *  @see http://github.com/WareNinja - http://about.me/WareNinja
  * 	
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,15 +27,18 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 import com.wareninja.opensource.common.LOGGING;
-import com.wareninja.opensource.common.ObjectSerializer;
 import com.wareninja.opensource.droidfu.cachefu.ObjectCache;
+import com.wareninja.opensource.droidfu.cachefu.ObjectSerializer;
 
 public class GenericStore {
     
-	private static final String TAG = "GenericStore";
+	private static final String TAG = GenericStore.class.getSimpleName();
 	
-	public static final int TYPE_SHAREDPREF = 0;
-	public static final int TYPE_MEMDISKCACHE = 1;
+    public static enum TYPE { 
+    	SHAREDPREF, MEMDISKCACHE
+    }
+	//public static final int TYPE_SHAREDPREF = 0;
+	//public static final int TYPE_MEMDISKCACHE = 1;
 	
 	public static final String KEY_IMAGECACHEFUPATH = "IMAGECACHEFUPATH";
     public static final String KEY_OBJECTCACHEFUPATH = "OBJECTCACHEFUPATH";
@@ -43,43 +47,47 @@ public class GenericStore {
 	private static String PREF_FILE_NAME = "WareNinja_appPrefs";
 	public static final String SETTINGS_ISCACHEHAVEDATA = "ISCACHEHAVEDATA";
     
-	public static void clearAll(int type, Context context) {
+	public static void clearAll(TYPE type, Context context) {
 		clearAll(type, context, "unknown");
 	}
-	public static void clearAll(int type, Context context, String caller) {
-		if (TYPE_MEMDISKCACHE==type)
+	public static void clearAll(TYPE type, Context context, String caller) {
+		if (TYPE.MEMDISKCACHE==type) {
 			clearCache(context, caller);
-		else
-			clearLocal(context, caller);
+		}
+		else {
+			clearPrefs(context, caller);
+		}
 	}
 	private static void clearCache(Context context, String caller) {
 		((ApplicationWareNinja)context.getApplicationContext()).getObjectCache().removeAllObjects();
 		((ApplicationWareNinja)context.getApplicationContext()).getImageCache().removeAllObjects();
-		removeObject(SETTINGS_ISCACHEHAVEDATA, context);
+		removeObjectFromPrefs(SETTINGS_ISCACHEHAVEDATA, context);
 	}
-    private static void clearLocal(Context context, String caller) {
-        Editor editor = 
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE).edit();
+    private static void clearPrefs(Context context, String caller) {
+        Editor editor = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.commit();
     }
 
     // ---
-    public static boolean saveObject(int type, String objKey, Serializable objData, Context context) {
+    public static boolean saveObject(TYPE type, String objKey, Serializable objData, Context context) {
     	
-    	if (TYPE_MEMDISKCACHE==type)
+    	if (TYPE.MEMDISKCACHE==type) {
     		return saveObjectInCache(objKey, objData, context);
-    	else
-    		return saveObject(objKey, objData, context);
+    	}
+    	else {
+    		return saveObjectInPrefs(objKey, objData, context);
+    	}
     }
     private static boolean saveObjectInCache(String objKey, Serializable objData, Context context) {
-    	if (!getCustomBoolean(SETTINGS_ISCACHEHAVEDATA, context))
-			setCustomData(TYPE_SHAREDPREF, SETTINGS_ISCACHEHAVEDATA, true, context);
+    	if (!getCustomBoolean(SETTINGS_ISCACHEHAVEDATA, context)) {
+    		setCustomData(TYPE.SHAREDPREF, SETTINGS_ISCACHEHAVEDATA, true, context);
+    	}
     	
     	ObjectCache objCache = ((ApplicationWareNinja)context.getApplicationContext()).getObjectCache();
         return objCache.saveObject(objKey, objData);
     }
-    private static boolean saveObject(String objKey, Serializable dataObj, Context context) {
+    private static boolean saveObjectInPrefs(String objKey, Serializable dataObj, Context context) {
         Editor editor =
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(objKey, ObjectSerializer.serialize(dataObj) );
@@ -87,56 +95,58 @@ public class GenericStore {
         return editor.commit(); 
     }
     
-    public static Object getObject(int type, String objKey, Context context) {
-    	if (TYPE_MEMDISKCACHE==type)
+    public static Object getObject(TYPE type, String objKey, Context context) {
+    	if (TYPE.MEMDISKCACHE==type) {
     		return getObjectFromCache(objKey, context);
-    	else
-    		return getObject(objKey, context);
+    	}
+    	else {
+    		return getObjectFromPrefs(objKey, context);
+    	}
     }
     private static Object getObjectFromCache(String objKey, Context context) {
     	ObjectCache objCache = ((ApplicationWareNinja)context.getApplicationContext()).getObjectCache();
     	return objCache.getObject(objKey);
     }
-    private static Object getObject(String objKey, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+    private static Object getObjectFromPrefs(String objKey, Context context) {
+        SharedPreferences savedSession = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
         Object dataObj = ObjectSerializer.deserialize(savedSession.getString(objKey, null));
         
         return dataObj;
     }
     
-    public static Object removeObject(int type, String objKey, Context context) {
-    	if (TYPE_MEMDISKCACHE==type)
+    public static Object removeObject(TYPE type, String objKey, Context context) {
+    	if (TYPE.MEMDISKCACHE==type) {
     		return removeObjectFromCache(objKey, context);
-    	else
-    		return removeObject(objKey, context);
+    	}
+    	else {
+    		return removeObjectFromPrefs(objKey, context);
+    	}
     }
     private static boolean removeObjectFromCache(String objKey, Context context) {
     	ObjectCache objCache = ((ApplicationWareNinja)context.getApplicationContext()).getObjectCache();
     	return objCache.removeObject(objKey);
     }
-    private static boolean removeObject(String objKey, Context context) {
-        Editor editor =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE).edit();
+    private static boolean removeObjectFromPrefs(String objKey, Context context) {
+        Editor editor = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE).edit();
         editor.remove(objKey);
-        
-        //if(LOGGING.DEBUG)Log.d(TAG, "removedObject| objKey:"+objKey);
         
         return editor.commit(); 
     }
     
-    public static boolean isCustomKeyExist(int type, String customKey, Context context) {
-    	if (TYPE_MEMDISKCACHE==type)
-        	return isCustomKeyExistInCache(customKey, context);
-        else
-        	return isCustomKeyExistInLocal(customKey, context);
+    public static boolean isCustomKeyExist(TYPE type, String customKey, Context context) {
+    	if (TYPE.MEMDISKCACHE==type) {
+    		return isCustomKeyExistInCache(customKey, context);
+    	}
+        else {
+        	return isCustomKeyExistInPrefs(customKey, context);
+        }
     }
     private static boolean isCustomKeyExistInCache(String objKey, Context context) {
     	ObjectCache objCache = ((ApplicationWareNinja)context.getApplicationContext()).getObjectCache();
     	return objCache.containsKey(objKey);
     }
-    private static boolean isCustomKeyExistInLocal(String customKey, Context context) {
+    private static boolean isCustomKeyExistInPrefs(String customKey, Context context) {
         SharedPreferences savedSession =
             context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
@@ -144,47 +154,33 @@ public class GenericStore {
     }
     // ---
     
-    public static boolean setCustomData(int type, String key, Object value, Context context) {
-    	if (TYPE_MEMDISKCACHE==type)
+    public static boolean setCustomData(TYPE type, String key, Object value, Context context) {
+    	if (TYPE.MEMDISKCACHE==type) {
     		return saveObjectInCache(key, (Serializable)value, context);
-    	else
-    		return setCustomDataInLocal(key, value, context);
+    	}
+    	else {
+    		return setCustomDataInPrefs(key, value, context);
+    	}
     }
-    private static boolean setCustomDataInLocal(String key, Object value, Context context) {
+    private static boolean setCustomDataInPrefs(String key, Object value, Context context) {
     	
-    	Editor editor =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE).edit();
+    	Editor editor = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE).edit();
     	
-    	if (value instanceof Boolean)
-        	editor.putBoolean(key, (Boolean)value);
-        else if (value instanceof Integer)
+    	if (value instanceof Boolean) {
+    		editor.putBoolean(key, (Boolean)value);
+    	}
+        else if (value instanceof Integer) {
         	editor.putInt(key, (Integer)value);
-        else if (value instanceof String)
+        }
+        else if (value instanceof String) {
         	editor.putString(key, (String)value);
-        else if (value instanceof Float)
+        }
+        else if (value instanceof Float) {
         	editor.putFloat(key, (Float)value);
-        else if (value instanceof Long)
+        }
+        else if (value instanceof Long) {
         	editor.putLong(key, (Long)value);
-        
-    	
-    	/*
-    	final boolean booleanObj = false;
-    	final int intObj = -1;
-    	final String stringObj = "";
-    	final float floatObj = 1F;
-    	final long longObj = 1L;
-    		
-        if (value.getClass().isInstance(booleanObj))
-        	editor.putBoolean(key, (Boolean)value);
-        else if (value.getClass().isInstance(intObj))
-        	editor.putInt(key, (Integer)value);
-        else if (value.getClass().isInstance(stringObj))
-        	editor.putString(key, (String)value);
-        else if (value.getClass().isInstance(floatObj))
-        	editor.putFloat(key, (Float)value);
-        else if (value.getClass().isInstance(longObj))
-        	editor.putLong(key, (Long)value);
-        */
+        }
         
         return editor.commit(); 
     }
@@ -193,8 +189,7 @@ public class GenericStore {
     	return getCustomBoolean(key, false, context);
     }
     public static boolean getCustomBoolean(String key, boolean defValue, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences savedSession = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
         return (savedSession.getBoolean(key, defValue));
     }
@@ -203,8 +198,7 @@ public class GenericStore {
     	return getCustomString(key, null, context);
     }
     public static String getCustomString(String key, String defValue, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences savedSession = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
         return (savedSession.getString(key, defValue));
     }
@@ -213,8 +207,7 @@ public class GenericStore {
     	return getCustomInt(key, -1, context);
     }
     public static int getCustomInt(String key, int defValue, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences savedSession = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
         return (savedSession.getInt(key, defValue));
     }
@@ -223,8 +216,7 @@ public class GenericStore {
     	return getCustomFloat(key, -1F, context);
     }
     public static float getCustomFloat(String key, float defValue, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences savedSession = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
         return (savedSession.getFloat(key, defValue));
     }
@@ -233,63 +225,62 @@ public class GenericStore {
     	return getCustomLong(key, -1L, context);
     }
     public static long getCustomLong(String key, long defValue, Context context) {
-        SharedPreferences savedSession =
-            context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences savedSession = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         
         return (savedSession.getLong(key, defValue));
     }
     
 
     // ------
-    //-- <optional> you can use this to track&clear pre-defined set of data from cache
+    //-- <optional> you can use this to track & clear pre-defined set of data from cache
     public static final String CUSTOMPREFIXES_INCACHE = "CUSTOMPREFIXES_INCACHE";// object: UsersInCache
     public static void checkAddCustomPrefix(String prefix, Context context) {
     	
     	CustomPrefixesInCache prefixesInCache = new CustomPrefixesInCache();
-    	if ( !isCustomKeyExist(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context)) {
+    	if ( !isCustomKeyExist(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context)) {
     		
     		prefixesInCache.add(prefix);
     		if(LOGGING.DEBUG)Log.d(TAG, CUSTOMPREFIXES_INCACHE+" doesNOT exist, create NEW|"+prefix+"|"+prefixesInCache.toString());
     		
-    		saveObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, prefixesInCache, context);
+    		saveObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, prefixesInCache, context);
     	}
     	else {
-    		prefixesInCache = (CustomPrefixesInCache)getObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
+    		prefixesInCache = (CustomPrefixesInCache)getObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
     		if (!prefixesInCache.contains(prefix)) {
     			prefixesInCache.add(prefix);
     			
     			if(LOGGING.DEBUG)Log.d(TAG, CUSTOMPREFIXES_INCACHE+" do exist, add and save|"+prefix+"|"+prefixesInCache.toString());
     			
-        		saveObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, prefixesInCache, context);
+        		saveObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, prefixesInCache, context);
     		}
     	}
     }
     public static void checkRemoveCustomPrefix(String prefix, Context context) {
     	CustomPrefixesInCache prefixesInCache = new CustomPrefixesInCache();
-    	if ( isCustomKeyExist(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context)) {
+    	if ( isCustomKeyExist(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context)) {
     		
-    		prefixesInCache = (CustomPrefixesInCache)getObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
+    		prefixesInCache = (CustomPrefixesInCache)getObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
     		if (prefixesInCache.contains(prefix)) {
     			prefixesInCache.remove(prefix);
     			
     			if(LOGGING.DEBUG)Log.d(TAG, CUSTOMPREFIXES_INCACHE+" do exist, add and save|"+prefix+"|"+prefixesInCache.toString());
     			
     			if (prefixesInCache.size()==0)
-    				removeObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
+    				removeObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
     			else
-    				saveObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, prefixesInCache, context);
+    				saveObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, prefixesInCache, context);
     		}
     	}
     }
     public static void removeAllCustomPrefixes(Context context) {
-    	if ( isCustomKeyExist(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context)) {
-    		CustomPrefixesInCache prefixesInCache = (CustomPrefixesInCache)getObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
+    	if ( isCustomKeyExist(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context)) {
+    		CustomPrefixesInCache prefixesInCache = (CustomPrefixesInCache)getObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
     		List<String> customPrefixes = prefixesInCache.getCustomPrefixes();
     		
     		if(LOGGING.DEBUG)Log.d(TAG, CUSTOMPREFIXES_INCACHE+"| will clear all data for "+prefixesInCache.toString());
     		for (String customPrefix:customPrefixes)
-    			removeObject(GenericStore.TYPE_MEMDISKCACHE,customPrefix, context);
-    		removeObject(GenericStore.TYPE_MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
+    			removeObject(GenericStore.TYPE.MEMDISKCACHE,customPrefix, context);
+    		removeObject(GenericStore.TYPE.MEMDISKCACHE,CUSTOMPREFIXES_INCACHE, context);
     	}
     	else {
     		if(LOGGING.DEBUG)Log.d(TAG, CUSTOMPREFIXES_INCACHE+" doesNOT exist, no action needed");

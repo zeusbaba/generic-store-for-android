@@ -1,6 +1,8 @@
 /***
-	Copyright (c) 2010-2011 WareNinja.com
-	Author: yg@wareninja.com
+ * 	Copyright (c) 2010-2013 WareNinja.com / BEERSTORM.net
+ * 	@author yg@wareninja.com
+ *  @see http://github.com/WareNinja - http://about.me/WareNinja
+ *  
 */
 
 package com.wareninja.opensource.common;
@@ -12,13 +14,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -27,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -37,6 +43,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.impl.cookie.DateUtils;
 
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -56,12 +63,20 @@ import android.graphics.Shader.TileMode;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 
-
+/**
+ * Contains bunch of utility functions for general use!
+ * 
+ */
 public class WareNinjaUtils {
 
-	private static final String TAG = "WareNinjaUtils";
+	private static final String TAG = WareNinjaUtils.class.getSimpleName();
 
 	public static boolean checkInternetConnection(Context context) {
 
@@ -100,34 +115,6 @@ public class WareNinjaUtils {
 
     	return (conMgr.getActiveNetworkInfo()!=null && conMgr.getActiveNetworkInfo().isRoaming());
     }
-	
-	//--- trusting any ssl url! ---
-	public static void trustEveryone() {
-		
-		if(LOGGING.DEBUG)Log.d(TAG, "trustEveryone()");
-		
-        try {
-                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
-                        public boolean verify(String hostname, SSLSession session) {
-                                return true;
-                        }});
-                SSLContext context = SSLContext.getInstance("TLS");
-                context.init(null, new X509TrustManager[]{new X509TrustManager(){
-                        public void checkClientTrusted(X509Certificate[] chain,
-                                        String authType) throws CertificateException {}
-                        public void checkServerTrusted(X509Certificate[] chain,
-                                        String authType) throws CertificateException {}
-                        public X509Certificate[] getAcceptedIssuers() {
-                                return new X509Certificate[0];
-                        }}}, new SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(
-                                context.getSocketFactory());
-        } catch (Exception e) { // should never happen
-                e.printStackTrace();
-        }
-	}
-	//---
-	
 	
 	
     public static String convertExpiresInMillis2String(long millis) {
@@ -192,6 +179,53 @@ public class WareNinjaUtils {
 		}
 	}
    
+	public static String getShortFormattedDate() {
+		return getShortFormattedDate(System.currentTimeMillis());
+	}
+	public static String getShortFormattedDate(long millis) {
+		String resp = "";
+		try {
+			resp = getShortFormattedDate(new Date(millis));
+		} catch (Exception ex){}
+		return resp;
+	}
+	public static String getShortFormattedDate(Date date) {
+		
+		String resp = "";
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+			resp = sdf.format(date);
+		} catch (Exception ex){}
+		return resp;
+	}
+	 
+	public static String getFormattedDate() {
+		return getFormattedDate(System.currentTimeMillis());
+	}
+	public static String getFormattedDate(long millis) {
+		String resp = "";
+		try {
+			resp = getFormattedDate(new Date(millis));
+		} catch (Exception ex){}
+		return resp;
+	}
+	public static String getFormattedDate(Date date) {
+		
+		String resp = "";
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+			resp = sdf.format(date);
+		} catch (Exception ex){}
+		return resp;
+	}
+	public static String getFormattedDate(Long millis, String timeZone) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+		if (!TextUtils.isEmpty(timeZone)) sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+		
+		return millis!=null?sdf.format( new Date(millis) ):"";
+	}
+	
 	
 	public static Drawable Drawable4LoadImageFromWeb(String url) {
         
@@ -417,6 +451,25 @@ public class WareNinjaUtils {
         }
         return sb.toString();
     }
+    
+    public static Bundle decodeUrl(String s) {
+        Bundle params = new Bundle();
+        if (s != null) {
+            String array[] = s.split("&");
+            for (String parameter : array) {
+                String v[] = parameter.split("=");
+                // YG: in case param has no value
+                if (v.length==2){
+                	params.putString(URLDecoder.decode(v[0]),
+                                 URLDecoder.decode(v[1]));
+                }
+                else {
+                	params.putString(URLDecoder.decode(v[0])," ");
+                }
+            }
+        }
+        return params;
+    }
 
     public static String openGetUrl_respStr(String url, Bundle params) 
           throws MalformedURLException, IOException {
@@ -519,7 +572,94 @@ public class WareNinjaUtils {
         return imageData;
     }
 	
+	
+	/*
+     * building Gravatar URL;
+     * 	String email = "someone@somewhere.com";
+     * 	String hash = Util.md5Hex(email);
+     * 
+     * 	http://www.gravatar.com/205e460b479e2e5b48aec07710c08d50.json
+     * 
+     * 	check here for gravatar profiles: http://en.gravatar.com/site/implement/profiles/json/
+     * 
+     * OR very simply request the image; http://en.gravatar.com/site/implement/images/ 
+     * -> http://www.gravatar.com/avatar/HASH.png
+     * By default, images are presented at 80px by 80px if no size parameter is supplied
+     * optional; ?s=200   to set size  (1px up to 512px)
+     * 
+     */
+    public static String hex(byte[] array) {
+    	StringBuffer sb = new StringBuffer();
+    	for (int i = 0; i < array.length; ++i) {
+    		sb.append(Integer.toHexString((array[i]& 0xFF) | 0x100).substring(1,3));        
+    	}
+    	return sb.toString();
+    }
+    public static String md5Hex (String message) {
+    	try {
+    		MessageDigest md = MessageDigest.getInstance("MD5");
+    		return hex (md.digest(message.getBytes("CP1252")));
+      } catch (NoSuchAlgorithmException e) {
+      } catch (UnsupportedEncodingException e) {
+      }
+      return null;
+    }
+    
+
 	//--- Android App Utils ---
+    public static void showSoftKeyboard (Context context, View view) {
+    	try {
+			((InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE))
+		    .showSoftInput(view, InputMethodManager.SHOW_FORCED);
+    	}
+    	catch (Exception ex) {
+    		Log.w(TAG, "showSoftKeyboard->"+ex.toString());
+    	}
+  	}
+    public static void hideSoftKeyboard (Context context, View view) {
+    	try {
+			InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+    	}
+    	catch (Exception ex) {
+    		Log.w(TAG, "hideSoftKeyboard->"+ex.toString());
+    	}
+  	}
+    
+	 /**
+     * Display a simple alert dialog with the given text and title.
+     * 
+     * @param context 
+     *          Android context in which the dialog should be displayed
+     * @param title 
+     *          Alert dialog title
+     * @param text
+     *          Alert dialog message
+     */
+    public static void showAlert(Context context, String title, String text) {
+        Builder alertBuilder = new Builder(context);
+        alertBuilder.setTitle(title);
+        alertBuilder.setMessage(text);
+        alertBuilder.create().show();
+    }
+	
+	public static void clearCookies(Context context) {
+        // Edge case: an illegal state exception is thrown if an instance of 
+        // CookieSyncManager has not be created.  CookieSyncManager is normally
+        // created by a WebKit view, but this might happen if you start the 
+        // app, restore saved state, and click logout before running a UI 
+        // dialog in a WebView -- in which case the app crashes
+    	try {
+	        @SuppressWarnings("unused")
+	        CookieSyncManager cookieSyncMngr = 
+	            CookieSyncManager.createInstance(context);
+	        CookieManager cookieManager = CookieManager.getInstance();
+	        cookieManager.removeAllCookie();
+    	}
+    	catch (Exception ex) {}
+    }
+	
+	
 	/**
 	 * Get current version number.
 	 * 
@@ -566,20 +706,38 @@ public class WareNinjaUtils {
 	public static boolean isIntentAvailable(final Context context, final Intent intent) {
 	    final PackageManager packageManager = context.getPackageManager();
 	    
-	    /*
-	    Log.d("IntentUtils",
-	    		context.getPackageName()
-	    		+ "|" + context.getApplicationInfo().toString()
-	    		+ "|" + intent.getAction()+ "|" + intent.toString()
-	    		+ "|" + packageManager.toString()
-	    	);
-	    */
 	    List<ResolveInfo> list =
 	            packageManager.queryIntentActivities(intent,
 	                    PackageManager.MATCH_DEFAULT_ONLY);
 	    return list.size() > 0;
 	}
 	
+	//--- trusting any ssl url! ---
+	public static void trustEveryone() {
+		
+		if(LOGGING.DEBUG)Log.d(TAG, "trustEveryone()");
+		
+        try {
+                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
+                        public boolean verify(String hostname, SSLSession session) {
+                                return true;
+                        }});
+                SSLContext context = SSLContext.getInstance("TLS");
+                context.init(null, new X509TrustManager[]{new X509TrustManager(){
+                        public void checkClientTrusted(X509Certificate[] chain,
+                                        String authType) throws CertificateException {}
+                        public void checkServerTrusted(X509Certificate[] chain,
+                                        String authType) throws CertificateException {}
+                        public X509Certificate[] getAcceptedIssuers() {
+                                return new X509Certificate[0];
+                        }}}, new SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(
+                                context.getSocketFactory());
+        } catch (Exception e) { // should never happen
+                e.printStackTrace();
+        }
+	}
+	//---
 	
 	// --- GENERAL Util func's ---
 	/*

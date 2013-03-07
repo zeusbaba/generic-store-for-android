@@ -1,6 +1,8 @@
-/* Copyright (c) 2010-2011 WareNinja.com
- * Author: yg@wareninja.com
- *
+/***
+ * 	Copyright (c) 2010-2013 WareNinja.com / BEERSTORM.net
+ * 	@author yg@wareninja.com
+ *  @see http://github.com/WareNinja - http://about.me/WareNinja
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +30,7 @@ import java.io.Serializable;
  * It exposes helper methods to immediately access objects
  * 
  * @author yg@wareninja.com
- *  
+ * @see http://github.com/WareNinja - http://about.me/WareNinja
  */
 public class ObjectCache extends AbstractCache<String, byte[]> {
 

@@ -1,6 +1,7 @@
 /***
- * 	Copyright (c) 2010-2011 WareNinja.com
- * 	Author: yg@wareninja.com
+ * 	Copyright (c) 2010-2013 WareNinja.com / BEERSTORM.net
+ * 	@author yg@wareninja.com
+ *  @see http://github.com/WareNinja - http://about.me/WareNinja
  * 	
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +29,7 @@ import com.wareninja.opensource.droidfu.cachefu.ImageCache;
 import com.wareninja.opensource.droidfu.cachefu.ObjectCache;
 
 public class ApplicationWareNinja extends android.app.Application {
-	private static String TAG="ApplicationWareNinja";
+	private static String TAG = ApplicationWareNinja.class.getSimpleName();
 	
 	public ApplicationWareNinja() {
 		super();
@@ -61,19 +62,23 @@ public class ApplicationWareNinja extends android.app.Application {
 	
 	public void clearImageCacheFu() {
 		int itemCount = imageCache.removeAllObjects();
-		if(LOGGING.DEBUG)Log.d(TAG, "cleared " 
+		if(LOGGING.DEBUG) {
+			Log.d(TAG, "cleared " 
 				+ itemCount 
 				+ " items from ImageCache"
 				+ "|" + imageCache.getDiskCacheDirectory()
 				);
+		}
 	}
 	public void clearObjectCacheFu() {
 		int itemCount = objectCache.removeAllObjects();
-		if(LOGGING.DEBUG)Log.d(TAG, "cleared " 
+		if(LOGGING.DEBUG) {
+			Log.d(TAG, "cleared " 
 				+ itemCount
 				+ " items from ObjectCache"
 				+ "|" + objectCache.getDiskCacheDirectory()
 				);
+		}
 	}
 	public void clearAllCacheFu() {
 		
@@ -147,9 +152,9 @@ public class ApplicationWareNinja extends android.app.Application {
 			objectCache.setCacheDirName(mainCacheDirName_AppCache);// main cache dir name
 			objectCache.enableDiskCache(this, ObjectCache.DISK_CACHE_SDCARD);
             
-            if ( !GenericStore.isCustomKeyExist(GenericStore.TYPE_MEMDISKCACHE, GenericStore.KEY_OBJECTCACHEFUPATH, this) )
+            if ( !GenericStore.isCustomKeyExist(GenericStore.TYPE.MEMDISKCACHE, GenericStore.KEY_OBJECTCACHEFUPATH, this) )
 	        	GenericStore.setCustomData(
-	        			GenericStore.TYPE_SHAREDPREF
+	        			GenericStore.TYPE.SHAREDPREF
 	        			, GenericStore.KEY_OBJECTCACHEFUPATH 
 	        			,objectCache.getDiskCacheDirectory()
 	        			, this);
@@ -171,9 +176,9 @@ public class ApplicationWareNinja extends android.app.Application {
 			imageCache.setCacheDirName(mainCacheDirName_AppCache);// main cache dir name
 			imageCache.enableDiskCache(this, ObjectCache.DISK_CACHE_SDCARD);
 			
-			if ( !GenericStore.isCustomKeyExist(GenericStore.TYPE_MEMDISKCACHE, GenericStore.KEY_IMAGECACHEFUPATH, this) )
+			if ( !GenericStore.isCustomKeyExist(GenericStore.TYPE.MEMDISKCACHE, GenericStore.KEY_IMAGECACHEFUPATH, this) )
 	        	GenericStore.setCustomData(
-	        			GenericStore.TYPE_SHAREDPREF
+	        			GenericStore.TYPE.SHAREDPREF
 	        			, GenericStore.KEY_IMAGECACHEFUPATH 
 	        			,imageCache.getDiskCacheDirectory()
 	        			, this);

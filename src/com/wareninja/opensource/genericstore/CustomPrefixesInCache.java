@@ -1,6 +1,7 @@
 /***
- * 	Copyright (c) 2010-2011 WareNinja.com
- * 	Author: yg@wareninja.com
+ * 	Copyright (c) 2010-2013 WareNinja.com / BEERSTORM.net
+ * 	@author yg@wareninja.com
+ *  @see http://github.com/WareNinja - http://about.me/WareNinja
  * 	
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +26,7 @@ import java.util.List;
 public class CustomPrefixesInCache implements Serializable {
 	private static final long serialVersionUID = 1L;
     
-	private static final String TAG = "CustomPrefixesInCache";
+	private static final String TAG = CustomPrefixesInCache.class.getSimpleName();
 	
 	private List<String> customPrefixes;
     
@@ -55,6 +56,6 @@ public class CustomPrefixesInCache implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CustomPrefixesInCache [customPrefixes=" + customPrefixes + "]";
+		return TAG+" [customPrefixes=" + customPrefixes + "]";
 	}
 }

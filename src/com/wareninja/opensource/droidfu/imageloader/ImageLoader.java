@@ -37,8 +37,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.wareninja.opensource.common.HttpUtils;
 import com.wareninja.opensource.common.LOGGING;
+import com.wareninja.opensource.common.wsrequest.HttpUtils;
 import com.wareninja.opensource.droidfu.cachefu.ImageCache;
 import com.wareninja.opensource.droidfu.widgets.WebImageView;
 
